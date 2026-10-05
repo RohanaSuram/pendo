@@ -1,0 +1,22 @@
+# Python
+backend/venv/
+venv/
+.venv/
+__pycache__/
+*.pyc
+.env
+
+# Runtime data (regenerated on startup)
+backend/data/chroma_db/
+backend/uploads/
+
+# Node
+node_modules/
+frontend/dist/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+.env.local
+*.log

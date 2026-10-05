@@ -1,0 +1,46 @@
+:root {
+  --bg-deep: #0a0e14;
+  --bg-card: #111820;
+  --bg-elevated: #161d28;
+  --border: #1e2a38;
+  --accent: #00ff9d;
+  --accent-dim: #00cc7d;
+  --accent-soft: rgba(0, 255, 157, 0.15);
+  --warn: #ff9d00;
+  --error: #ff4d6a;
+  --text: #e6edf3;
+  --text-muted: #8b9eb0;
+  --font-sans: "Outfit", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--bg-deep);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+code, pre {
+  font-family: var(--font-mono);
+}

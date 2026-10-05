@@ -1,0 +1,11 @@
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+pydantic>=2.5.0
+chromadb>=0.4.22
+sentence-transformers>=2.2.2
+numpy>=1.26.0
+opencv-python-headless>=4.8.0
+fer>=22.0.0
+setuptools>=65.0.0,<82  # FER needs pkg_resources
+Pillow>=10.0.0
