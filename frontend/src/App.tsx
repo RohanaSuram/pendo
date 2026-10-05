@@ -1,3 +1,4 @@
+import { apiUrl } from "./api";
 import { useState } from "react";
 import "./App.css";
 import { AnalysisForm } from "./components/AnalysisForm";
@@ -18,7 +19,7 @@ export default function App() {
     setError(null);
     setResult(null);
     try {
-      const res = await fetch("/api/analyze", {
+      const res = await fetch(apiUrl("/analyze"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

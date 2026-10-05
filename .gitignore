@@ -20,3 +20,9 @@ frontend/dist/
 .idea/
 .env.local
 *.log
+
+# TypeScript build artifacts
+*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+frontend/.env

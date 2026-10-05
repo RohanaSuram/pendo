@@ -1,22 +1,31 @@
-#!/bin/bash
-# Run backend and frontend (use in separate terminals or with a process manager)
-cd "$(dirname "$0")/.."
+#!/usr/bin/env bash
+# Start backend (http://localhost:8000) and frontend (http://localhost:5173) together.
+# Ctrl+C stops both.
+set -e
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+cleanup() {
+  echo; echo "Stopping..."
+  kill "$BACKEND_PID" "$FRONTEND_PID" 2>/dev/null || true
+  wait 2>/dev/null || true
+}
+trap cleanup INT TERM EXIT
 
 echo "Starting backend..."
-cd backend && python -m venv venv 2>/dev/null || true
-source venv/bin/activate 2>/dev/null || true
-pip install -r requirements.txt -q
+cd "$ROOT/backend"
+[ -d venv ] || python3 -m venv venv
+source venv/bin/activate
+pip install -q -r requirements.txt
 uvicorn main:app --reload --port 8000 &
 BACKEND_PID=$!
 
 echo "Starting frontend..."
-cd ../frontend && npm install && npm run dev &
+cd "$ROOT/frontend"
+[ -d node_modules ] || npm install
+npm run dev &
 FRONTEND_PID=$!
 
-echo "Backend PID: $BACKEND_PID"
-echo "Frontend PID: $FRONTEND_PID"
-echo "Backend: http://localhost:8000"
+echo "Backend:  http://localhost:8000"
 echo "Frontend: http://localhost:5173"
-echo "Press Ctrl+C to stop"
-
+echo "Press Ctrl+C to stop both"
 wait

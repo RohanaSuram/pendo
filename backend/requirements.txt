@@ -1,11 +1,23 @@
-fastapi>=0.109.0
-uvicorn[standard]>=0.27.0
-python-multipart>=0.0.6
-pydantic>=2.5.0
-chromadb>=0.4.22
-sentence-transformers>=2.2.2
-numpy>=1.26.0
-opencv-python-headless>=4.8.0
-fer>=22.0.0
-setuptools>=65.0.0,<82  # FER needs pkg_resources
-Pillow>=10.0.0
+# Exact versions tested together (Python 3.13). Upgrade deliberately, not by accident.
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+python-multipart==0.0.32
+pydantic==2.13.5
+
+# Vector search
+chromadb==1.5.9
+sentence-transformers==6.1.0
+
+# Facial emotion recognition
+fer==25.10.3
+tensorflow==2.21.0
+torch==2.14.1
+torchvision==0.29.1
+facenet-pytorch==2.5.3
+# OpenCV 5 breaks FER's face detector (empty Haar cascade) — stay on 4.x
+opencv-contrib-python==4.14.0.94
+opencv-python-headless==4.14.0.94
+setuptools==81.0.0  # FER needs pkg_resources (removed in setuptools 82)
+
+numpy==2.5.3
+Pillow==12.3.0

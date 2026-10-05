@@ -210,11 +210,19 @@ def _identify_threshold(
     sweet = flags[0].flag_id
     too_easy_before = max(too_easy_flags) if too_easy_flags else None
 
+    def _is_overwhelmed(a: FlagAnalysis) -> bool:
+        sign = a.overwhelm_signs[0].lower() if a.overwhelm_signs else ""
+        # "no major overwhelm detected" contains the word "overwhelm" but means the opposite
+        return "disengaged" in a.engagement_level or (bool(sign) and "no major" not in sign)
+
     for a in analyses:
-        if "disengaged" in a.engagement_level or "overwhelm" in a.overwhelm_signs[0].lower():
+        if _is_overwhelmed(a):
             too_hard = min(too_hard, a.flag_id)
             break
+    # Sweet spot = the last flow / comfortable flag *before* things got too hard
     for a in reversed(analyses):
+        if a.flag_id >= too_hard:
+            continue
         if "flow" in a.engagement_level or "under-stimulated" in a.emotional_trend:
             sweet = a.flag_id
             break
@@ -246,10 +254,13 @@ def _build_recommendations(
 ) -> list[AdaptiveRecommendation]:
     recs = []
 
-    if threshold.too_hard_at_flag <= len(flags):
+    flag_ids = [f.flag_id for f in flags]
+    if threshold.too_hard_at_flag in flag_ids:
+        idx = flag_ids.index(threshold.too_hard_at_flag)
+        where = f"after Flag {flag_ids[idx - 1]}" if idx > 0 else f"from Flag {flag_ids[0]}"
         recs.append(
             AdaptiveRecommendation(
-                change="Reduce enemy HP by 15–20% after Flag {0}".format(threshold.too_hard_at_flag - 1),
+                change=f"Reduce enemy HP by 15–20% {where}",
                 justification="Player struggled at Flag {0}; HP scaling likely contributes to overwhelm.".format(threshold.too_hard_at_flag),
                 vector_support="Vector matches suggest frustration/overwhelm cluster.",
             )

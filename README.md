@@ -126,7 +126,38 @@ Response follows the full analysis schema (player profile, vector matches, flag 
 
 ## Dependencies note
 
-Facial emotion detection (FER) requires `setuptools<82` for `pkg_resources` compatibility. This is pinned in `requirements.txt`.
+Python 3.13. All versions in `requirements.txt` are pinned. Two pins matter:
+
+- `setuptools<82` — FER needs `pkg_resources`.
+- `opencv-*<5` — OpenCV 5 breaks FER's face detector (empty Haar cascade error).
+
+## Deploy (put it online)
+
+The app is two pieces hosted separately:
+
+| Piece | Host | Why |
+|---|---|---|
+| Frontend (React game + UI) | **Netlify** (free) | Static files; auto-deploys on every push |
+| Backend (FastAPI + FER + embeddings) | **Hugging Face Spaces** (free, Docker) | Needs ~2 GB RAM for TensorFlow/PyTorch — most free hosts give 512 MB |
+
+### 1. Backend → Hugging Face Spaces
+
+1. Create a free account at huggingface.co → **New Space**.
+2. Name it `pendo-api`, choose **Docker → Blank**, hardware **CPU basic (free)**.
+3. Upload the *contents* of `backend/` (Dockerfile, main.py, requirements.txt, app/) to the Space
+   (**Files → Add file → Upload files**), or push with git.
+4. In the Space's **Settings → Variables**, add
+   `ALLOWED_ORIGINS` = `https://<your-site>.netlify.app`
+5. Wait for the build (first one takes ~10 min). Your API is at
+   `https://<hf-username>-pendo-api.hf.space` — open `/health` to check.
+
+### 2. Frontend → Netlify
+
+1. app.netlify.com → **Add new site → Import from GitHub** → pick this repo.
+   `netlify.toml` already sets the build (base `frontend`, publish `dist`).
+2. **Site configuration → Environment variables**: add
+   `VITE_API_URL` = `https://<hf-username>-pendo-api.hf.space`
+3. Deploy. Webcam access works because Netlify serves over HTTPS.
 
 ## Environment
 
@@ -134,6 +165,8 @@ Facial emotion detection (FER) requires `setuptools<82` for `pkg_resources` comp
 |-----------------|---------------|--------------------------------|
 | `VECTOR_DB_PATH`| `./data/chroma_db` | ChromaDB persistence path |
 | `UPLOAD_DIR`    | `./uploads`   | Video upload directory         |
+| `ALLOWED_ORIGINS` | `http://localhost:5173` | Comma-separated sites allowed to call the API |
+| `VITE_API_URL` (frontend) | `/api` | Backend URL for production builds |
 | `MAX_VIDEO_SIZE_MB` | `100`     | Max upload size                |
 
 Copy `backend/.env.example` to `backend/.env` to override.

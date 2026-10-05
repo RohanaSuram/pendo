@@ -43,11 +43,16 @@ def _get_embedding_model() -> SentenceTransformer:
 def ensure_collection() -> chromadb.Collection:
     """Ensure difficulty_patterns collection exists and is seeded."""
     client = _get_client()
-    try:
-        coll = client.get_collection("difficulty_patterns")
-    except Exception:
-        coll = client.create_collection("difficulty_patterns", metadata={"description": "GameSense difficulty embeddings"})
-        _seed_collection(coll)
+    coll = client.get_or_create_collection(
+        "difficulty_patterns", metadata={"description": "GameSense difficulty embeddings"}
+    )
+    # Re-seed if empty (e.g. a previous start failed to download the embedding model)
+    if coll.count() == 0:
+        try:
+            _seed_collection(coll)
+        except Exception:
+            client.delete_collection("difficulty_patterns")
+            raise
     return coll
 
 

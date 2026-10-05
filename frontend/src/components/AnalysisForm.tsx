@@ -1,3 +1,4 @@
+import { apiUrl } from "../api";
 import { useState, useCallback } from "react";
 import type { AnalysisRequest, DifficultyFlag, TelemetryPoint, UserSignal, FacialEmotionFrame } from "../types";
 import { WebcamCapture } from "./WebcamCapture";
@@ -58,7 +59,7 @@ export function AnalysisForm({ onSubmit, disabled }: Props) {
     if (frames.length === 0) return;
     setAnalyzingFaces(true);
     try {
-      const res = await fetch("/api/analyze-frames", {
+      const res = await fetch(apiUrl("/analyze-frames"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ frames }),

@@ -1,3 +1,4 @@
+import { apiUrl } from "../api";
 /**
  * Split layout: left = webcam, right = game.
  * At each difficulty change, captures frame, analyzes emotion, adapts.
@@ -24,7 +25,7 @@ export function AdaptiveGameView() {
     if (!frame) return null;
 
     try {
-      const res = await fetch("/api/analyze-frames", {
+      const res = await fetch(apiUrl("/analyze-frames"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ frames: [frame] }),
